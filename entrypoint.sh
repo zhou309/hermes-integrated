@@ -19,6 +19,15 @@ if [ "$AUTO_UPDATE" = "true" ]; then
   fi
 fi
 
+# Debug: show what's in the hermes home dir
+echo "--- /root/.hermes contents ---"
+ls -la /root/.hermes/ 2>/dev/null || echo "(empty or not mounted)"
+echo "--- /root/.hermes/sessions (if exists) ---"
+ls /root/.hermes/sessions/ 2>/dev/null | head -5 || echo "(no sessions dir)"
+echo "--- state.db exists? ---"
+ls -lh /root/.hermes/state.db 2>/dev/null || echo "(no state.db)"
+echo "------------------------------"
+
 # Migrate old hermes dashboard sessions into webui sessions dir
 OLD_SESSIONS=/root/.hermes/sessions
 WEBUI_SESSIONS=/root/.hermes/webui/sessions
@@ -28,7 +37,6 @@ if [ -d "$OLD_SESSIONS" ]; then
   for f in "$OLD_SESSIONS"/session_*.json "$OLD_SESSIONS"/*.json; do
     [ -f "$f" ] || continue
     BASENAME=$(basename "$f")
-    # Strip leading "session_" prefix if present to match webui format
     DEST_NAME="${BASENAME#session_}"
     DEST="$WEBUI_SESSIONS/$DEST_NAME"
     if [ ! -f "$DEST" ]; then
@@ -39,13 +47,11 @@ if [ -d "$OLD_SESSIONS" ]; then
   [ "$COUNT" -gt 0 ] && echo "Migrated $COUNT old sessions to webui."
 fi
 
-# Start hermes agent dashboard in background (webui connects to it)
 echo "Starting Hermes Agent on port 9119..."
 hermes dashboard --host 127.0.0.1 --port 9119 --no-open &
 
 sleep 2
 
-# Run hermes-webui server.py directly as the foreground process
 echo "Starting Hermes Web UI on port ${PORT:-8787}..."
 export HERMES_WEBUI_HOST=0.0.0.0
 export HERMES_WEBUI_PORT="${PORT:-8787}"
