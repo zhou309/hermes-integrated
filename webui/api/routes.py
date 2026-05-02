@@ -1110,7 +1110,8 @@ def _handle_insights(handler, parsed) -> bool:
 def handle_get(handler, parsed) -> bool:
     """Handle all GET routes. Returns True if handled, False for 404."""
 
-    if parsed.path in ("/", "/index.html") or parsed.path.startswith("/session/"):
+    _SPA_PAGES = {"/sessions", "/settings", "/workspace", "/cron", "/skills", "/profiles", "/providers"}
+    if parsed.path in ("/", "/index.html") or parsed.path.startswith("/session/") or parsed.path in _SPA_PAGES:
         from urllib.parse import quote
         from api.updates import WEBUI_VERSION
         version_token = quote(WEBUI_VERSION, safe="")
