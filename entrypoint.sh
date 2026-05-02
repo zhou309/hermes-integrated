@@ -8,12 +8,14 @@ echo "Starting Hermes integrated setup..."
 if [ "$AUTO_UPDATE" = "true" ]; then
   echo "Checking for Hermes Agent updates..."
   cd /opt/hermes-agent
-  if git pull --recurse-submodules 2>&1 | grep -v 'Already up to date'; then
+  UPDATE_OUTPUT=$(git pull --recurse-submodules 2>&1)
+  if echo "$UPDATE_OUTPUT" | grep -q 'Already up to date'; then
+    echo "Agent already up to date."
+  else
+    echo "$UPDATE_OUTPUT"
     echo "Updating Agent dependencies..."
     VIRTUAL_ENV=/opt/hermes-agent/venv uv pip install -e ".[all]" --quiet
     echo "Agent update complete."
-  else
-    echo "Already up to date."
   fi
 fi
 
