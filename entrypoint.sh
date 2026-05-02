@@ -19,6 +19,26 @@ if [ "$AUTO_UPDATE" = "true" ]; then
   fi
 fi
 
+# Migrate old hermes dashboard sessions into webui sessions dir
+OLD_SESSIONS=/root/.hermes/sessions
+WEBUI_SESSIONS=/root/.hermes/webui/sessions
+if [ -d "$OLD_SESSIONS" ]; then
+  mkdir -p "$WEBUI_SESSIONS"
+  COUNT=0
+  for f in "$OLD_SESSIONS"/session_*.json "$OLD_SESSIONS"/*.json; do
+    [ -f "$f" ] || continue
+    BASENAME=$(basename "$f")
+    # Strip leading "session_" prefix if present to match webui format
+    DEST_NAME="${BASENAME#session_}"
+    DEST="$WEBUI_SESSIONS/$DEST_NAME"
+    if [ ! -f "$DEST" ]; then
+      cp "$f" "$DEST"
+      COUNT=$((COUNT + 1))
+    fi
+  done
+  [ "$COUNT" -gt 0 ] && echo "Migrated $COUNT old sessions to webui."
+fi
+
 # Start hermes agent dashboard in background (webui connects to it)
 echo "Starting Hermes Agent on port 9119..."
 hermes dashboard --host 127.0.0.1 --port 9119 --no-open &
