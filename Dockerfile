@@ -9,13 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
-# Clone hermes-agent
+# Install hermes-agent
 RUN git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent
-
 WORKDIR /opt/hermes-agent
 RUN uv venv venv --python 3.11 \
     && VIRTUAL_ENV=/opt/hermes-agent/venv uv pip install -e ".[all]"
-
 ENV PATH="/opt/hermes-agent/venv/bin:$PATH"
 
 # Setup .hermes directory
@@ -23,20 +21,11 @@ RUN mkdir -p /root/.hermes/{cron,sessions,logs,memories,skills,pairing,hooks,ima
     && cp cli-config.yaml.example /root/.hermes/config.yaml \
     && touch /root/.hermes/.env
 
-# Setup hermes-webui
-WORKDIR /opt/hermes-webui
+# Install hermes-webui into the same venv
 COPY webui /opt/hermes-webui
-RUN python -m pip install --upgrade pip setuptools wheel uv && \
-    uv pip install -e . 2>/dev/null || python -m pip install -r requirements.txt 2>/dev/null || true
+WORKDIR /opt/hermes-webui
+RUN VIRTUAL_ENV=/opt/hermes-agent/venv uv pip install -r requirements.txt
 
-# Set hermes-webui env vars
-ENV HERMES_WEBUI_HOST=0.0.0.0
-ENV HERMES_WEBUI_PORT=8787
-ENV HERMES_WEBUI_AGENT_DIR=/opt/hermes-agent
-ENV HERMES_HOME=/root/.hermes
-
-# Copy auth_proxy and combined entrypoint
-COPY auth_proxy.py /auth_proxy.py
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

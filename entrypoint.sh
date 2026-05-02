@@ -25,8 +25,11 @@ hermes dashboard --host 127.0.0.1 --port 9119 --no-open &
 
 sleep 2
 
-# Start hermes-webui directly on Railway's PORT
-WEBUI_PORT="${PORT:-8787}"
-echo "Starting Hermes Web UI on port ${WEBUI_PORT}..."
+# Run hermes-webui server.py directly as the foreground process
+echo "Starting Hermes Web UI on port ${PORT:-8787}..."
+export HERMES_WEBUI_HOST=0.0.0.0
+export HERMES_WEBUI_PORT="${PORT:-8787}"
+export HERMES_WEBUI_AGENT_DIR=/opt/hermes-agent
+export HERMES_HOME=/root/.hermes
 cd /opt/hermes-webui
-exec python bootstrap.py "${WEBUI_PORT}" --host 0.0.0.0 --no-browser
+exec python server.py
