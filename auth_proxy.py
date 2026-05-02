@@ -13,7 +13,7 @@ import time
 from aiohttp import web, ClientSession, WSMsgType
 
 HERMES_HOME = "/root/.hermes"
-UPSTREAM = "http://127.0.0.1:9119"
+UPSTREAM = "http://127.0.0.1:8787"
 USERNAME = os.environ.get("DASHBOARD_USER", "admin")
 PASSWORD = os.environ.get("DASHBOARD_PASSWORD", "")
 SECRET = secrets.token_bytes(32)
