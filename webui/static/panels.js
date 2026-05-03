@@ -152,6 +152,31 @@ function _consumeSettingsTargetPanel(fallback = 'chat') {
   return target;
 }
 
+function activateHermesHqShell() {
+  _currentPanel = 'hq';
+  document.querySelectorAll('[data-panel]').forEach(t => t.classList.toggle('active', t.dataset.panel === 'hq'));
+  document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+  const panelEl = $('panelHq');
+  if (panelEl) panelEl.classList.add('active');
+  const mainEl = document.querySelector('main.main');
+  if (mainEl) {
+    ['hq','chat','settings','skills','memory','tasks','workspaces','profiles','insights'].forEach(p => {
+      mainEl.classList.toggle('showing-' + p, p === 'hq');
+    });
+  }
+  document.body.classList.add('hermes-hq-mode');
+  if (typeof renderHermesHq === 'function') renderHermesHq();
+  syncAppTitlebar();
+}
+
+function bootHermesHqShell() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(activateHermesHqShell), { once: true });
+    return;
+  }
+  requestAnimationFrame(activateHermesHqShell);
+}
+
 async function switchPanel(name, opts = {}) {
   const nextPanel = name || 'chat';
   const prevPanel = _currentPanel;
@@ -722,7 +747,6 @@ async function hqSendCommand(autoSend) {
     return;
   }
   hqCloseCommand();
-  await switchPanel('chat');
   requestAnimationFrame(() => {
     const composer = $('msg');
     if (!composer) return;
@@ -1156,6 +1180,8 @@ function renderHermesHq() {
     button.classList.toggle('active', button.dataset.hqTab === HERMES_HQ_STATE.activeSection);
   });
 }
+
+bootHermesHqShell();
 
 document.addEventListener('click', event => {
   const overlay = $('hqCommandOverlay');

@@ -733,7 +733,7 @@ $('importFileInput').onchange=async(e)=>{
     if(res.ok&&res.session){
       await loadSession(res.session.session_id);
       await renderSessionList();
-      if(_currentPanel==='settings') switchPanel('chat');
+      if(_currentPanel==='settings') switchPanel('hq');
       showToast(t('session_imported'));
     }
   }catch(err){
