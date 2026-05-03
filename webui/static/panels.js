@@ -1,4 +1,4 @@
-let _currentPanel = 'chat';
+let _currentPanel = 'hq';
 let _renamingAppTitlebar = false;  // guard against re-entrant rename
 let _skillsData = null; // cached skills list
 let _cronList = null; // cached cron jobs (array)
@@ -15,6 +15,7 @@ let _pendingSettingsTargetPanel = null; // destination selected while settings h
 
 // Map of panel names → i18n keys for the app titlebar label.
 const APP_TITLEBAR_KEYS = {
+  hq: 'Hermes HQ',
   chat: 'tab_chat', tasks: 'tab_tasks', skills: 'tab_skills',
   memory: 'tab_memory', workspaces: 'tab_workspaces',
   profiles: 'tab_profiles', todos: 'tab_todos', settings: 'tab_settings',
@@ -35,6 +36,9 @@ function syncAppTitlebar() {
     mainText = S.session.title || (typeof t === 'function' ? t('untitled') : 'Untitled');
     const vis = Array.isArray(S.messages) ? S.messages.filter(m => m && m.role && m.role !== 'tool') : [];
     if (typeof t === 'function') subText = t('n_messages', vis.length);
+  } else if (panel === 'hq') {
+    mainText = 'Hermes HQ';
+    subText = 'Portfolio command center';
   } else {
     const key = APP_TITLEBAR_KEYS[panel];
     mainText = key && typeof t === 'function' ? t(key) : (panel.charAt(0).toUpperCase() + panel.slice(1));
@@ -164,11 +168,13 @@ async function switchPanel(name, opts = {}) {
   // showing-<name> class on <main>; no class means chat (the default).
   const mainEl = document.querySelector('main.main');
   if (mainEl) {
-    ['settings','skills','memory','tasks','workspaces','profiles','insights'].forEach(p => {
+    ['hq','chat','settings','skills','memory','tasks','workspaces','profiles','insights'].forEach(p => {
       mainEl.classList.toggle('showing-' + p, nextPanel === p);
     });
   }
+  document.body.classList.toggle('hermes-hq-mode', nextPanel === 'hq');
   // Lazy-load panel data
+  if (nextPanel === 'hq' && typeof renderHermesHq === 'function') renderHermesHq();
   if (nextPanel === 'tasks') await loadCrons();
   if (nextPanel === 'skills') await loadSkills();
   if (nextPanel === 'memory') await loadMemory();
@@ -206,6 +212,946 @@ function _isCronScheduleError(job) {
   return _isRecurringCronJob(job) &&
     !job.next_run_at &&
     (job.state === 'error' || job.last_status === 'error');
+}
+
+const HERMES_HQ_DATA = {
+  sharedAgents: [
+    {
+      id: 'max',
+      sprite: 'agent-max.png',
+      companyId: 'shared',
+      companyName: 'Shared HQ',
+      badge: 'HQ',
+      name: 'Max',
+      role: 'COO / Command Owner',
+      status: 'reviewing',
+      task: 'Creative Rounds',
+      progress: 91,
+      nextHandoff: 'CEO',
+      reportsTo: 'CEO',
+      output: 'Direction & approvals',
+      note: 'Coordinating the active task queue and approving handoffs.'
+    },
+    {
+      id: 'atlas',
+      sprite: 'agent-atlas.png',
+      companyId: 'shared',
+      companyName: 'Shared HQ',
+      badge: 'HQ',
+      name: 'Atlas',
+      role: 'Shopify Ops Lead',
+      status: 'drafting',
+      task: 'Store Ops Audit',
+      progress: 68,
+      nextHandoff: 'Vera',
+      reportsTo: 'Max',
+      output: 'Draft packet',
+      note: 'Preparing storefront and publishing support packets for the active brands.'
+    },
+    {
+      id: 'vera',
+      sprite: 'agent-vera.png',
+      companyId: 'shared',
+      companyName: 'Shared HQ',
+      badge: 'HQ',
+      name: 'Vera',
+      role: 'QA / Finance',
+      status: 'reviewing',
+      task: 'Finance Review Pack',
+      progress: 54,
+      nextHandoff: 'Max',
+      reportsTo: 'Max',
+      output: 'QA and finance review',
+      note: 'Clearing margin, compliance, and pricing risk before approval.'
+    },
+    {
+      id: 'hermes-core',
+      sprite: 'agent-hermes-core.png',
+      companyId: 'shared',
+      companyName: 'Shared HQ',
+      badge: 'SYS',
+      name: 'Hermes Core',
+      role: 'System Chat',
+      status: 'idle',
+      task: 'Ready for direct system questions',
+      progress: 0,
+      nextHandoff: 'None',
+      reportsTo: 'You',
+      output: 'System support',
+      note: 'Use this lane when you want direct system help instead of routing through Max.'
+    }
+  ],
+  companies: [
+    {
+      id: 'boothmade',
+      code: 'BM',
+      theme: 'amber',
+      name: 'Boothmade',
+      subtitle: 'Business Event & Display Solutions',
+      status: 'active',
+      priority: 'high',
+      outputs: ['Creative Direction v1', 'Moodboard', 'Mockup Concepts'],
+      blockers: ['None'],
+      agents: [
+        {
+          id: 'bm-scout',
+          sprite: 'agent-bm-scout.png',
+          companyId: 'boothmade',
+          companyName: 'Boothmade',
+          badge: 'BM',
+          name: 'BM-Scout',
+          role: 'Research',
+          status: 'waiting',
+          task: 'Boothmade Market Scan',
+          progress: 42,
+          nextHandoff: 'BM-Piper',
+          reportsTo: 'Max',
+          output: 'Research report',
+          note: 'Collecting competitor positioning signals and customer language patterns.'
+        },
+        {
+          id: 'bm-piper',
+          sprite: 'agent-bm-piper.png',
+          companyId: 'boothmade',
+          companyName: 'Boothmade',
+          badge: 'BM',
+          name: 'BM-Piper',
+          role: 'Product',
+          status: 'in_progress',
+          task: 'Ad Copy Variations',
+          progress: 71,
+          nextHandoff: 'BM-Nova',
+          reportsTo: 'Max',
+          output: 'Product brief',
+          note: 'Refining booth product packages and bundle logic for the next release.'
+        },
+        {
+          id: 'bm-nova',
+          sprite: 'agent-bm-nova.png',
+          companyId: 'boothmade',
+          companyName: 'Boothmade',
+          badge: 'BM',
+          name: 'BM-Nova',
+          role: 'Creative',
+          status: 'drafting',
+          task: 'Creative Direction - Trade Show Bundle',
+          progress: 58,
+          nextHandoff: 'BM-Sage',
+          reportsTo: 'Max',
+          output: 'Creative direction',
+          note: 'Building the visual direction and mockup references for Boothmade launch materials.'
+        },
+        {
+          id: 'bm-sage',
+          sprite: 'agent-bm-sage.png',
+          companyId: 'boothmade',
+          companyName: 'Boothmade',
+          badge: 'BM',
+          name: 'BM-Sage',
+          role: 'Listing / Ops',
+          status: 'awaiting_ceo',
+          task: 'Creative Rounds',
+          progress: 83,
+          nextHandoff: 'Max',
+          reportsTo: 'Max',
+          output: 'Shopify listing copy',
+          note: 'Wrapping Boothmade listing copy for final approval and launch sequencing.'
+        }
+      ]
+    },
+    {
+      id: 'h2waders',
+      code: 'H2',
+      theme: 'teal',
+      name: 'H2Waders',
+      subtitle: 'Field-Tested Waders & Gear',
+      status: 'active',
+      priority: 'high',
+      outputs: ['Landing Page Copy', 'Feature Matrix', 'Care Instructions'],
+      blockers: ['Claim review pending on waterproof performance phrasing'],
+      agents: [
+        {
+          id: 'h2-scout',
+          sprite: 'agent-h2-scout.png',
+          companyId: 'h2waders',
+          companyName: 'H2Waders',
+          badge: 'H2',
+          name: 'H2-Scout',
+          role: 'Research',
+          status: 'in_progress',
+          task: 'Guide Demand Scan',
+          progress: 64,
+          nextHandoff: 'H2-Piper',
+          reportsTo: 'Max',
+          output: 'Research report',
+          note: 'Collecting buyer language, seasonal signals, and competitor gaps across the wader category.'
+        },
+        {
+          id: 'h2-piper',
+          sprite: 'agent-h2-piper.png',
+          companyId: 'h2waders',
+          companyName: 'H2Waders',
+          badge: 'H2',
+          name: 'H2-Piper',
+          role: 'Product',
+          status: 'awaiting_review',
+          task: 'Product Page Copy',
+          progress: 67,
+          nextHandoff: 'H2-Sage',
+          reportsTo: 'Max',
+          output: 'Product brief',
+          note: 'Locking size, fit, and use-case logic for the next H2 product page release.'
+        },
+        {
+          id: 'h2-nova',
+          sprite: 'agent-h2-nova.png',
+          companyId: 'h2waders',
+          companyName: 'H2Waders',
+          badge: 'H2',
+          name: 'H2-Nova',
+          role: 'Creative',
+          status: 'idle',
+          task: 'Awaiting approved product brief',
+          progress: 0,
+          nextHandoff: 'None',
+          reportsTo: 'Max',
+          output: 'Creative direction',
+          note: 'Standing by for the approved product brief before starting rugged creative concepts.'
+        },
+        {
+          id: 'h2-sage',
+          sprite: 'agent-h2-sage.png',
+          companyId: 'h2waders',
+          companyName: 'H2Waders',
+          badge: 'H2',
+          name: 'H2-Sage',
+          role: 'Listing / Ops',
+          status: 'waiting',
+          task: 'Feature Stack Cleanup',
+          progress: 36,
+          nextHandoff: 'Vera',
+          reportsTo: 'Max',
+          output: 'Shopify listing copy',
+          note: 'Cleaning feature bullets, care language, and safe claim phrasing before review.'
+        }
+      ]
+    }
+  ],
+  tasks: [
+    {
+      id: 'task-bm-copy',
+      companyId: 'boothmade',
+      ownerId: 'bm-piper',
+      status: 'in_progress',
+      priority: 'high',
+      title: 'Ad Copy Variations',
+      nextHandoff: 'BM-Nova',
+      summary: 'Create a tighter set of ad copy angles for the next Boothmade campaign push.',
+      updatedAt: '09:41'
+    },
+    {
+      id: 'task-bm-scan',
+      companyId: 'boothmade',
+      ownerId: 'bm-scout',
+      status: 'waiting',
+      priority: 'medium',
+      title: 'Boothmade Market Scan',
+      nextHandoff: 'BM-Piper',
+      summary: 'Awaiting more competitor references before finalizing the research lane.',
+      updatedAt: '09:22'
+    },
+    {
+      id: 'task-vera-finance',
+      companyId: 'shared',
+      ownerId: 'vera',
+      status: 'blocked',
+      priority: 'high',
+      title: 'Finance Review Pack',
+      nextHandoff: 'Max',
+      summary: 'Prepare the shared finance check before it goes to Max for approval.',
+      updatedAt: '09:11'
+    },
+    {
+      id: 'task-h2-copy',
+      companyId: 'h2waders',
+      ownerId: 'h2-piper',
+      status: 'awaiting_review',
+      priority: 'high',
+      title: 'Product Page Copy',
+      nextHandoff: 'H2-Sage',
+      summary: 'Finalize the H2Waders product page language and hand it to Sage.',
+      updatedAt: '09:18'
+    },
+    {
+      id: 'task-bm-review',
+      companyId: 'boothmade',
+      ownerId: 'bm-sage',
+      status: 'awaiting_ceo',
+      priority: 'high',
+      title: 'Creative Rounds',
+      nextHandoff: 'Max',
+      summary: 'Wrap Boothmade creative review and send the lane to Max for approval.',
+      updatedAt: '09:04'
+    },
+    {
+      id: 'task-atlas-audit',
+      companyId: 'shared',
+      ownerId: 'atlas',
+      status: 'drafting',
+      priority: 'medium',
+      title: 'Store Ops Audit',
+      nextHandoff: 'Vera',
+      summary: 'Draft a concise Shopify ops audit for the active storefront lanes.',
+      updatedAt: '09:36'
+    }
+  ],
+  activity: [
+    { time: '09:48', text: 'Max cleared the policy check queue and opened the approval lane.' },
+    { time: '09:41', text: 'BM-Piper advanced ad copy into the handoff slot for Nova.' },
+    { time: '09:36', text: 'Atlas completed the Shopify audit pass and flagged one follow-up.' },
+    { time: '09:22', text: 'BM-Scout is waiting on more competitor references.' }
+  ]
+};
+
+const HERMES_HQ_STATE = {
+  selectedType: 'company',
+  selectedId: 'boothmade',
+  activeSection: 'dashboard',
+  commandTargetId: 'max',
+  companySearch: ''
+};
+
+function hqStatusLabel(status) {
+  const labels = {
+    idle: 'Idle',
+    waiting: 'Waiting',
+    drafting: 'Drafting',
+    reviewing: 'Reviewing',
+    blocked: 'Blocked',
+    awaiting_review: 'Awaiting Review',
+    awaiting_ceo: 'Awaiting CEO',
+    in_progress: 'In Progress'
+  };
+  return labels[status] || status;
+}
+
+function hqPriorityLabel(priority) {
+  const labels = { high: 'High', medium: 'Medium', low: 'Low' };
+  return labels[priority] || priority;
+}
+
+function hqStatusClass(status) {
+  return 'hq-status-' + String(status || 'idle').replace(/_/g, '-');
+}
+
+function hqPriorityClass(priority) {
+  return 'hq-priority-' + String(priority || 'medium');
+}
+
+function hqThemeClass(theme) {
+  return 'hq-theme-' + String(theme || 'steel');
+}
+
+function hqGetCompany(companyId) {
+  return HERMES_HQ_DATA.companies.find(company => company.id === companyId) || null;
+}
+
+function hqGetAllAgents() {
+  const companyAgents = HERMES_HQ_DATA.companies.flatMap(company => company.agents);
+  return [...HERMES_HQ_DATA.sharedAgents, ...companyAgents];
+}
+
+function hqGetAgent(agentId) {
+  return hqGetAllAgents().find(agent => agent.id === agentId) || null;
+}
+
+function hqGetTask(taskId) {
+  return HERMES_HQ_DATA.tasks.find(task => task.id === taskId) || null;
+}
+
+function hqCompanyTasks(companyId) {
+  return HERMES_HQ_DATA.tasks.filter(task => task.companyId === companyId);
+}
+
+function hqSharedDisplayAgents() {
+  return HERMES_HQ_DATA.sharedAgents.filter(agent => agent.id !== 'hermes-core');
+}
+
+function hqFilteredCompanies() {
+  const query = String(HERMES_HQ_STATE.companySearch || '').trim().toLowerCase();
+  if (!query) return HERMES_HQ_DATA.companies;
+  return HERMES_HQ_DATA.companies.filter(company => {
+    const haystack = `${company.name} ${company.code} ${company.subtitle}`.toLowerCase();
+    return haystack.includes(query);
+  });
+}
+
+function hqSetCompanySearch(value) {
+  HERMES_HQ_STATE.companySearch = value || '';
+  hqRenderMapFilters();
+  hqRenderCampus();
+}
+
+function hqCompanyMetrics(companyId) {
+  const company = hqGetCompany(companyId);
+  if (!company) return { activeTasks: 0, blocked: 0, activeAgents: 0 };
+  const tasks = HERMES_HQ_DATA.tasks.filter(task => task.companyId === companyId);
+  return {
+    activeTasks: tasks.filter(task => !['blocked', 'awaiting_ceo'].includes(task.status)).length,
+    blocked: tasks.filter(task => task.status === 'blocked').length,
+    activeAgents: company.agents.filter(agent => agent.status !== 'idle').length
+  };
+}
+
+function hqGlobalStats() {
+  const allAgents = hqGetAllAgents().filter(agent => agent.id !== 'hermes-core');
+  const tasks = HERMES_HQ_DATA.tasks;
+  return [
+    { label: 'Active Companies', value: String(HERMES_HQ_DATA.companies.length), tone: 'neutral' },
+    { label: 'Tracked Tasks', value: String(tasks.length), tone: 'neutral' },
+    { label: 'Blocked Items', value: String(tasks.filter(task => task.status === 'blocked').length), tone: 'danger' },
+    { label: 'Awaiting CEO', value: String(tasks.filter(task => task.status === 'awaiting_ceo').length), tone: 'warning' },
+    { label: 'Total Agents', value: String(allAgents.length), tone: 'neutral' }
+  ];
+}
+
+function hqSelectEntity(type, id) {
+  HERMES_HQ_STATE.selectedType = type;
+  HERMES_HQ_STATE.selectedId = id;
+  renderHermesHq();
+}
+
+function hqFocusSection(section) {
+  HERMES_HQ_STATE.activeSection = section;
+  document.querySelectorAll('[data-hq-tab]').forEach(button => {
+    button.classList.toggle('active', button.dataset.hqTab === section);
+  });
+  const sectionMap = {
+    dashboard: 'hqSectionDashboard',
+    shared: 'hqSectionShared',
+    companies: 'hqSectionCompanies',
+    tasks: 'hqSectionTasks',
+    agents: 'hqSectionAgents'
+  };
+  const target = $(sectionMap[section] || 'hqSectionDashboard');
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function hqCommandTarget(targetId) {
+  return hqGetAgent(targetId) || hqGetCompany(targetId);
+}
+
+function hqOpenCommand(targetId) {
+  HERMES_HQ_STATE.commandTargetId = targetId || 'max';
+  const target = hqCommandTarget(HERMES_HQ_STATE.commandTargetId);
+  const overlay = $('hqCommandOverlay');
+  const title = $('hqCommandTitle');
+  const meta = $('hqCommandMeta');
+  const label = $('hqCommandTarget');
+  const input = $('hqCommandInput');
+  if (!overlay || !title || !meta || !label || !input) return;
+  if (target && target.role) {
+    title.textContent = 'Message ' + target.name;
+    meta.textContent = 'This opens the Hermes chat flow and routes the instruction through the selected agent lane.';
+    label.textContent = `${target.name} • ${target.role}`;
+  } else if (target) {
+    title.textContent = 'Message ' + target.name;
+    meta.textContent = 'This opens chat and routes the request through Max for the selected company lane.';
+    label.textContent = `${target.name} • ${target.subtitle || 'Company lane'}`;
+  } else {
+    title.textContent = 'Message Max';
+    meta.textContent = 'This opens the Hermes chat flow and routes the instruction through Max.';
+    label.textContent = 'Max • COO / Command Owner';
+  }
+  input.value = '';
+  overlay.style.display = 'flex';
+  overlay.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => input.focus());
+}
+
+function hqCloseCommand() {
+  const overlay = $('hqCommandOverlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function hqCommandPrompt(target, text) {
+  const body = String(text || '').trim();
+  if (!body) return '';
+  if (target && target.id === 'hermes-core') {
+    return `Hermes Core, help me directly with this system task:\n\n${body}`;
+  }
+  if (target && target.subtitle) {
+    return `Max, route this instruction to the ${target.name} lane and keep the team aligned.\n\nInstruction:\n${body}`;
+  }
+  if (target) {
+    return `Max, route this instruction to ${target.name} (${target.role}) and keep the handoff chain updated.\n\nInstruction:\n${body}`;
+  }
+  return `Max, take the following instruction and coordinate the next steps.\n\nInstruction:\n${body}`;
+}
+
+async function hqSendCommand(autoSend) {
+  const input = $('hqCommandInput');
+  const target = hqCommandTarget(HERMES_HQ_STATE.commandTargetId);
+  if (!input) return;
+  const prompt = hqCommandPrompt(target, input.value);
+  if (!prompt) {
+    showToast('Add a command before sending.', 2400, 'warning');
+    input.focus();
+    return;
+  }
+  hqCloseCommand();
+  await switchPanel('chat');
+  requestAnimationFrame(() => {
+    const composer = $('msg');
+    if (!composer) return;
+    composer.value = prompt;
+    if (typeof autoResize === 'function') autoResize();
+    composer.focus();
+    if (autoSend && typeof send === 'function') {
+      send();
+    } else {
+      showToast(`Drafted a command for ${target && target.name ? target.name : 'Max'}.`, 2600, 'info');
+    }
+  });
+}
+
+function hqRenderSidebar() {
+  const list = $('hqCompanyList');
+  const feed = $('hqMiniFeed');
+  if (list) {
+    list.innerHTML = HERMES_HQ_DATA.companies.map(company => {
+      const metrics = hqCompanyMetrics(company.id);
+      const selected = HERMES_HQ_STATE.selectedType === 'company' && HERMES_HQ_STATE.selectedId === company.id;
+      return `
+        <button class="hq-company-chip ${hqThemeClass(company.theme)}${selected ? ' is-selected' : ''}" type="button" onclick="hqSelectEntity('company','${company.id}')">
+          <span class="hq-company-chip-head">
+            <span class="hq-company-chip-name">${esc(company.name)}</span>
+            <span class="hq-company-chip-code">${esc(company.code)}</span>
+          </span>
+          <span class="hq-company-chip-meta">A ${metrics.activeTasks} · B ${metrics.blocked} · AG ${metrics.activeAgents}</span>
+        </button>`;
+    }).join('');
+  }
+  if (feed) {
+    feed.innerHTML = HERMES_HQ_DATA.activity.map(item => `
+      <div class="hq-mini-feed-item">
+        <span class="hq-mini-feed-time">${esc(item.time)}</span>
+        <span>${esc(item.text)}</span>
+      </div>`).join('');
+  }
+}
+
+function hqRenderStats() {
+  const grid = $('hqStatGrid');
+  if (!grid) return;
+  grid.innerHTML = hqGlobalStats().map(stat => `
+    <div class="hq-stat-card hq-stat-${esc(stat.tone)}">
+      <div class="hq-stat-label">${esc(stat.label)}</div>
+      <div class="hq-stat-value">${esc(stat.value)}</div>
+    </div>`).join('');
+}
+
+function hqRenderMapFilters() {
+  const count = $('hqFilterCompanyCount');
+  const rows = $('hqFilterCompanyRows');
+  const roles = $('hqFilterRoleRows');
+  const activeWork = $('hqFilterActiveWork');
+  const blockedWork = $('hqFilterBlockedWork');
+  const awaitingCeo = $('hqFilterAwaitingCeo');
+  const tasks = HERMES_HQ_DATA.tasks;
+  if (count) count.textContent = String(HERMES_HQ_DATA.companies.length);
+  if (rows) {
+    rows.innerHTML = HERMES_HQ_DATA.companies.map(company => {
+      const selected = HERMES_HQ_STATE.selectedType === 'company' && HERMES_HQ_STATE.selectedId === company.id;
+      return `
+        <button class="hq-filter-row ${selected ? 'active' : ''}" type="button" onclick="hqSelectEntity('company','${company.id}')">
+          <span><i class="hq-dot hq-dot-live"></i>${esc(company.name)}</span>
+          <strong>${esc(company.code)}</strong>
+        </button>`;
+    }).join('');
+  }
+  if (activeWork) activeWork.textContent = String(tasks.filter(task => !['idle', 'blocked'].includes(task.status)).length);
+  if (blockedWork) blockedWork.textContent = String(tasks.filter(task => task.status === 'blocked').length);
+  if (awaitingCeo) awaitingCeo.textContent = String(tasks.filter(task => task.status === 'awaiting_ceo').length);
+  if (roles) {
+    const roleCounts = hqGetAllAgents().filter(agent => agent.id !== 'hermes-core').reduce((acc, agent) => {
+      acc[agent.role] = (acc[agent.role] || 0) + 1;
+      return acc;
+    }, {});
+    roles.innerHTML = Object.entries(roleCounts).map(([role, value]) => `
+      <button class="hq-filter-row" type="button" onclick="hqFocusSection('agents')">
+        <span>${esc(role)}</span>
+        <strong>${value}</strong>
+      </button>`).join('');
+  }
+}
+
+function hqPixelWindows(count) {
+  return Array.from({ length: count }, (_, index) => `<span style="--i:${index}"></span>`).join('');
+}
+
+function hqRenderAgentSprites(agents, compact) {
+  return agents.map(agent => `
+    <button class="hq-pixel-agent ${hqStatusClass(agent.status)}${compact ? ' compact' : ''}" type="button" onclick="event.stopPropagation();hqSelectEntity('agent','${agent.id}')" title="${esc(agent.name)} - ${esc(agent.role)}">
+      <span class="hq-pixel-avatar${agent.sprite ? ' has-sprite' : ''}" aria-hidden="true">${agent.sprite ? `<img class="hq-sprite" src="/static/assets/${esc(agent.sprite)}" alt="">` : esc(agent.name.charAt(0))}<span class="hq-led ${hqStatusClass(agent.status)}"></span></span>
+      <span>
+        <strong>${esc(agent.name)}</strong>
+        <em>${esc(hqStatusLabel(agent.status))}</em>
+      </span>
+    </button>`).join('');
+}
+
+function hqRenderCampus() {
+  const shared = $('hqCampusShared');
+  const companies = $('hqCampusCompanies');
+  if (!shared || !companies) return;
+  const sharedAgents = hqSharedDisplayAgents();
+  shared.innerHTML = `
+    <article class="hq-pixel-hq" onclick="hqSelectEntity('agent','max')">
+      <div class="hq-building-sign">Shared HQ</div>
+      <div class="hq-pixel-roof">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="hq-pixel-building hq-theme-steel">
+        <div class="hq-window-grid">${hqPixelWindows(18)}</div>
+        <div class="hq-command-desk">
+          ${hqRenderAgentSprites(sharedAgents, false)}
+        </div>
+      </div>
+      <button class="hq-pixel-command" type="button" onclick="event.stopPropagation();hqOpenCommand('max')">Speak to Max</button>
+    </article>`;
+  const visibleCompanies = hqFilteredCompanies();
+  if (!visibleCompanies.length) {
+    companies.innerHTML = `<div class="hq-campus-empty">No companies match that filter.</div>`;
+    return;
+  }
+  companies.innerHTML = visibleCompanies.map(company => {
+    const metrics = hqCompanyMetrics(company.id);
+    const selected = HERMES_HQ_STATE.selectedType === 'company' && HERMES_HQ_STATE.selectedId === company.id;
+    const tasks = hqCompanyTasks(company.id);
+    const priority = hqPriorityLabel(company.priority);
+    return `
+      <article class="hq-pixel-company ${hqThemeClass(company.theme)}${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('company','${company.id}')">
+        <div class="hq-building-sign">${esc(company.name)}</div>
+        <div class="hq-pixel-storefront">
+          <div class="hq-pixel-awning"><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="hq-window-grid small">${hqPixelWindows(12)}</div>
+          <div class="hq-pixel-door"></div>
+          <div class="hq-pixel-stats">
+            <span>A ${metrics.activeTasks}</span>
+            <span>B ${metrics.blocked}</span>
+            <span>AG ${metrics.activeAgents}</span>
+          </div>
+        </div>
+        <div class="hq-building-summary">
+          <span class="hq-priority-chip ${hqPriorityClass(company.priority)}">${esc(priority)}</span>
+          <span>${tasks.length} tracked tasks</span>
+          <span>${company.agents.length} agents inside</span>
+        </div>
+        <button class="hq-pixel-command" type="button" onclick="event.stopPropagation();hqSelectEntity('company','${company.id}')">Open Building</button>
+      </article>`;
+  }).join('');
+}
+
+function hqRenderShared() {
+  const grid = $('hqSharedGrid');
+  if (!grid) return;
+  grid.innerHTML = hqSharedDisplayAgents().map(agent => {
+    const selected = HERMES_HQ_STATE.selectedType === 'agent' && HERMES_HQ_STATE.selectedId === agent.id;
+    return `
+      <article class="hq-shared-card ${hqStatusClass(agent.status)}${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('agent','${agent.id}')">
+        <div class="hq-card-head">
+          <div>
+            <div class="hq-card-name">${esc(agent.name)}</div>
+            <div class="hq-card-role">${esc(agent.role)}</div>
+          </div>
+          <span class="hq-status-badge ${hqStatusClass(agent.status)}">${esc(hqStatusLabel(agent.status))}</span>
+        </div>
+        <div class="hq-card-task">${esc(agent.task)}</div>
+        <div class="hq-progress">
+          <span class="hq-progress-bar"><span style="width:${Math.max(0, Math.min(agent.progress, 100))}%"></span></span>
+          <span class="hq-progress-value">${agent.progress}%</span>
+        </div>
+        <div class="hq-card-foot">
+          <span>Next: ${esc(agent.nextHandoff)}</span>
+          <button class="hq-inline-chip" type="button" onclick="event.stopPropagation();hqOpenCommand('${agent.id}')">Command</button>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function hqRenderCompanies() {
+  const grid = $('hqCompanyGrid');
+  if (!grid) return;
+  grid.innerHTML = HERMES_HQ_DATA.companies.map(company => {
+    const metrics = hqCompanyMetrics(company.id);
+    const selected = HERMES_HQ_STATE.selectedType === 'company' && HERMES_HQ_STATE.selectedId === company.id;
+    return `
+      <article class="hq-company-card ${hqThemeClass(company.theme)}${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('company','${company.id}')">
+        <div class="hq-card-head">
+          <div>
+            <div class="hq-card-name">${esc(company.name)}</div>
+            <div class="hq-card-role">${esc(company.subtitle)}</div>
+          </div>
+          <span class="hq-status-badge ${hqPriorityClass(company.priority)}">${esc(hqPriorityLabel(company.priority))}</span>
+        </div>
+        <div class="hq-company-metrics">
+          <div><span>A</span><strong>${metrics.activeTasks}</strong></div>
+          <div><span>B</span><strong>${metrics.blocked}</strong></div>
+          <div><span>AG</span><strong>${metrics.activeAgents}</strong></div>
+        </div>
+        <div class="hq-company-roster">${company.agents.map(agent => `<span>${esc(agent.name)}</span>`).join('')}</div>
+        <div class="hq-card-foot">
+          <span>${esc(company.status.toUpperCase())}</span>
+          <button class="hq-inline-chip" type="button" onclick="event.stopPropagation();hqOpenCommand('${company.id}')">Command</button>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function hqRenderTasks() {
+  const board = $('hqTaskBoard');
+  if (!board) return;
+  const columns = [
+    { id: 'in_progress', label: 'In Progress' },
+    { id: 'drafting', label: 'Drafting' },
+    { id: 'blocked', label: 'Blocked' },
+    { id: 'awaiting_review', label: 'Awaiting Review' },
+    { id: 'awaiting_ceo', label: 'Awaiting CEO' },
+    { id: 'waiting', label: 'Waiting' }
+  ];
+  board.innerHTML = columns.map(column => {
+    const tasks = HERMES_HQ_DATA.tasks.filter(task => task.status === column.id);
+    const cards = tasks.length ? tasks.map(task => {
+      const owner = hqGetAgent(task.ownerId);
+      const company = task.companyId === 'shared' ? { code: 'HQ', theme: 'steel', name: 'Shared HQ' } : hqGetCompany(task.companyId);
+      const selected = HERMES_HQ_STATE.selectedType === 'task' && HERMES_HQ_STATE.selectedId === task.id;
+      return `
+        <article class="hq-task-card ${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('task','${task.id}')">
+          <div class="hq-task-kicker">
+            <span class="hq-inline-chip ${hqThemeClass(company && company.theme)}">${esc(company && company.code ? company.code : 'HQ')}</span>
+            <span>${esc(task.updatedAt)}</span>
+          </div>
+          <div class="hq-task-title">${esc(task.title)}</div>
+          <div class="hq-task-owner">${esc(owner ? owner.name : 'Unassigned')} • ${esc(hqStatusLabel(task.status))}</div>
+          <div class="hq-task-summary">${esc(task.summary)}</div>
+          <div class="hq-card-foot">
+            <span>Next: ${esc(task.nextHandoff)}</span>
+            <button class="hq-inline-chip" type="button" onclick="event.stopPropagation();hqOpenCommand('${task.ownerId}')">Command</button>
+          </div>
+        </article>`;
+    }).join('') : '<div class="hq-empty-lane">No active work in this lane.</div>';
+    return `
+      <section class="hq-task-column">
+        <div class="hq-task-column-head">
+          <span>${esc(column.label)}</span>
+          <span>${tasks.length}</span>
+        </div>
+        <div class="hq-task-column-body">${cards}</div>
+      </section>`;
+  }).join('');
+}
+
+function hqRenderAgents() {
+  const groups = $('hqAgentGroups');
+  if (!groups) return;
+  const lanes = [
+    { label: 'Shared HQ', agents: hqSharedDisplayAgents() },
+    ...HERMES_HQ_DATA.companies.map(company => ({ label: company.name, agents: company.agents }))
+  ];
+  groups.innerHTML = lanes.map(lane => `
+    <section class="hq-agent-group">
+      <div class="hq-agent-group-title">${esc(lane.label)}</div>
+      <div class="hq-agent-grid">
+        ${lane.agents.map(agent => {
+          const selected = HERMES_HQ_STATE.selectedType === 'agent' && HERMES_HQ_STATE.selectedId === agent.id;
+          return `
+            <article class="hq-agent-card ${hqStatusClass(agent.status)}${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('agent','${agent.id}')">
+              <div class="hq-agent-card-head">
+                <div class="hq-agent-avatar">${esc(agent.name.charAt(0))}</div>
+                <div>
+                  <div class="hq-card-name">${esc(agent.name)}</div>
+                  <div class="hq-card-role">${esc(agent.role)}</div>
+                </div>
+              </div>
+              <div class="hq-card-task">${esc(agent.task)}</div>
+              <div class="hq-progress">
+                <span class="hq-progress-bar"><span style="width:${Math.max(0, Math.min(agent.progress, 100))}%"></span></span>
+                <span class="hq-progress-value">${agent.progress}%</span>
+              </div>
+              <div class="hq-card-foot">
+                <span>${esc(hqStatusLabel(agent.status))}</span>
+                <button class="hq-inline-chip" type="button" onclick="event.stopPropagation();hqOpenCommand('${agent.id}')">Command</button>
+              </div>
+            </article>`;
+        }).join('')}
+      </div>
+    </section>`).join('');
+}
+
+function hqRenderInspector() {
+  const inspector = $('hqInspector');
+  if (!inspector) return;
+  if (HERMES_HQ_STATE.selectedType === 'company') {
+    const company = hqGetCompany(HERMES_HQ_STATE.selectedId) || HERMES_HQ_DATA.companies[0];
+    const metrics = hqCompanyMetrics(company.id);
+    const tasks = hqCompanyTasks(company.id);
+    const primaryAgent = company.agents.find(agent => agent.status !== 'idle') || company.agents[0];
+    inspector.innerHTML = `
+      <div class="hq-inspector-card hq-company-detail-card ${hqThemeClass(company.theme)}">
+        <div class="hq-company-detail-head">
+          <div class="hq-company-crest" aria-hidden="true">${esc(company.code)}</div>
+          <div>
+            <div class="hq-inspector-kicker">Company Detail</div>
+            <div class="hq-inspector-title">${esc(company.name)}</div>
+            <div class="hq-inspector-subtitle">${esc(company.subtitle)}</div>
+          </div>
+          <span class="hq-status-badge ${hqPriorityClass(company.priority)}">${esc(hqPriorityLabel(company.priority))}</span>
+        </div>
+        <div class="hq-inspector-stats hq-company-detail-stats">
+          <div><span>Active tasks</span><strong>${metrics.activeTasks}</strong></div>
+          <div><span>Blocked</span><strong>${metrics.blocked}</strong></div>
+          <div><span>Agents</span><strong>${metrics.activeAgents}</strong></div>
+          <div><span>Priority</span><strong>${esc(hqPriorityLabel(company.priority))}</strong></div>
+        </div>
+        <div class="hq-detail-tabs" aria-label="${esc(company.name)} detail views">
+          <button class="active" type="button">Overview</button>
+          <button type="button" onclick="hqFocusSection('agents')">Agents</button>
+          <button type="button" onclick="hqFocusSection('tasks')">Tasks</button>
+          <button type="button" onclick="hqOpenCommand('${company.id}')">Reports</button>
+        </div>
+        <div class="hq-company-office">
+          <div class="hq-office-grid">
+            ${company.agents.map(agent => `
+              <button class="hq-office-room ${hqStatusClass(agent.status)}" type="button" onclick="hqSelectEntity('agent','${agent.id}')" title="${esc(agent.task)} · Next: ${esc(agent.nextHandoff)}">
+                <span class="hq-office-room-sign">${esc(agent.name)}</span>
+                <span class="hq-office-room-role">${esc(agent.role)}</span>
+                <span class="hq-office-desk" aria-hidden="true"></span>
+              </button>`).join('')}
+          </div>
+        </div>
+        <div class="hq-agent-feature-card">
+          <div class="hq-pixel-avatar" aria-hidden="true">${esc(primaryAgent.name.charAt(0))}</div>
+          <div>
+            <strong>${esc(primaryAgent.name)}</strong>
+            <span>${esc(primaryAgent.role)} · ${esc(hqStatusLabel(primaryAgent.status))}</span>
+          </div>
+          <button class="hq-inline-chip" type="button" onclick="hqSelectEntity('agent','${primaryAgent.id}')">View</button>
+        </div>
+        <div class="hq-inspector-block">
+          <div class="hq-inspector-block-title">Company Tasks</div>
+          <div class="hq-inspector-list">${tasks.map(task => `<button type="button" class="hq-detail-task-row" onclick="hqSelectEntity('task','${task.id}')"><span>${esc(task.title)}</span><strong>${esc(hqStatusLabel(task.status))}</strong></button>`).join('') || '<div>No active tasks.</div>'}</div>
+        </div>
+        <div class="hq-inspector-block">
+          <div class="hq-inspector-block-title">Recent Output</div>
+          <div class="hq-inspector-list">${company.outputs.map(item => `<div>${esc(item)}</div>`).join('')}</div>
+        </div>
+        <div class="hq-inspector-block">
+          <div class="hq-inspector-block-title">Blockers</div>
+          <div class="hq-inspector-list">${company.blockers.map(item => `<div>${esc(item)}</div>`).join('')}</div>
+        </div>
+        <div class="hq-inspector-actions">
+          <button class="hq-primary-btn" type="button" onclick="hqOpenCommand('${company.id}')">Command This Lane</button>
+        </div>
+      </div>`;
+    return;
+  }
+  if (HERMES_HQ_STATE.selectedType === 'task') {
+    const task = hqGetTask(HERMES_HQ_STATE.selectedId) || HERMES_HQ_DATA.tasks[0];
+    const owner = hqGetAgent(task.ownerId);
+    const company = task.companyId === 'shared' ? { name: 'Shared HQ', subtitle: 'Support lane', theme: 'steel' } : hqGetCompany(task.companyId);
+    inspector.innerHTML = `
+      <div class="hq-inspector-card ${hqThemeClass(company && company.theme)}">
+        <div class="hq-inspector-kicker">Task Detail</div>
+        <div class="hq-inspector-title">${esc(task.title)}</div>
+        <div class="hq-inspector-subtitle">${esc(company ? company.name : 'Shared HQ')}</div>
+        <div class="hq-inspector-stats">
+          <div><span>Status</span><strong>${esc(hqStatusLabel(task.status))}</strong></div>
+          <div><span>Owner</span><strong>${esc(owner ? owner.name : 'Unassigned')}</strong></div>
+          <div><span>Priority</span><strong>${esc(hqPriorityLabel(task.priority))}</strong></div>
+          <div><span>Next handoff</span><strong>${esc(task.nextHandoff)}</strong></div>
+        </div>
+        <div class="hq-inspector-block">
+          <div class="hq-inspector-block-title">Summary</div>
+          <div class="hq-inspector-copy">${esc(task.summary)}</div>
+        </div>
+        <div class="hq-inspector-actions">
+          <button class="hq-primary-btn" type="button" onclick="hqOpenCommand('${task.ownerId}')">Command Owner</button>
+        </div>
+      </div>`;
+    return;
+  }
+  const agent = hqGetAgent(HERMES_HQ_STATE.selectedId) || HERMES_HQ_DATA.sharedAgents[0];
+  inspector.innerHTML = `
+    <div class="hq-inspector-card ${hqStatusClass(agent.status)}">
+      <div class="hq-inspector-kicker">Agent Detail</div>
+      <div class="hq-inspector-title">${esc(agent.name)}</div>
+      <div class="hq-inspector-subtitle">${esc(agent.role)}</div>
+      <div class="hq-inspector-stats">
+        <div><span>Status</span><strong>${esc(hqStatusLabel(agent.status))}</strong></div>
+        <div><span>Reports to</span><strong>${esc(agent.reportsTo)}</strong></div>
+        <div><span>Output type</span><strong>${esc(agent.output)}</strong></div>
+        <div><span>Next handoff</span><strong>${esc(agent.nextHandoff)}</strong></div>
+      </div>
+      <div class="hq-inspector-block">
+        <div class="hq-inspector-block-title">Current Task</div>
+        <div class="hq-inspector-copy">${esc(agent.task)}</div>
+      </div>
+      <div class="hq-inspector-block">
+        <div class="hq-inspector-block-title">Current Note</div>
+        <div class="hq-inspector-copy">${esc(agent.note)}</div>
+      </div>
+      <div class="hq-inspector-actions">
+        <button class="hq-primary-btn" type="button" onclick="hqOpenCommand('${agent.id}')">Send Command</button>
+      </div>
+    </div>`;
+}
+
+function hqRenderBottomFeed() {
+  const feed = $('hqBottomFeed');
+  if (!feed) return;
+  feed.innerHTML = HERMES_HQ_DATA.activity.map(item => `
+    <div class="hq-feed-row">
+      <span class="hq-mini-feed-time">${esc(item.time)}</span>
+      <span>${esc(item.text)}</span>
+    </div>`).join('');
+}
+
+function renderHermesHq() {
+  if (!$('mainHq')) return;
+  document.body.classList.toggle('hermes-hq-mode', _currentPanel === 'hq');
+  hqRenderSidebar();
+  hqRenderMapFilters();
+  hqRenderCampus();
+  hqRenderStats();
+  hqRenderShared();
+  hqRenderCompanies();
+  hqRenderTasks();
+  hqRenderAgents();
+  hqRenderInspector();
+  hqRenderBottomFeed();
+  document.querySelectorAll('[data-hq-tab]').forEach(button => {
+    button.classList.toggle('active', button.dataset.hqTab === HERMES_HQ_STATE.activeSection);
+  });
+}
+
+document.addEventListener('click', event => {
+  const overlay = $('hqCommandOverlay');
+  if (overlay && event.target === overlay) hqCloseCommand();
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && $('hqCommandOverlay') && $('hqCommandOverlay').style.display !== 'none') {
+    hqCloseCommand();
+  }
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderHermesHq, { once: true });
+} else {
+  renderHermesHq();
 }
 
 function _cronStatusMeta(job) {
