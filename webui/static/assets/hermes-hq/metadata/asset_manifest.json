@@ -1,0 +1,1127 @@
+{
+  "source_files": {
+    "characters": "/mnt/data/corporate_pixel_art_character_roster.png",
+    "buildings": "/mnt/data/cyberpunk_building_sprite_sheet_assets.png",
+    "rooms": "/mnt/data/sci_fi_interior_tileset_for_game.png"
+  },
+  "total_assets": {
+    "characters": 24,
+    "buildings": 12,
+    "rooms": 8
+  },
+  "notes": [
+    "These are individual transparent PNG assets split from the generated sprite sheets.",
+    "The checkerboard background has been removed and replaced with true transparency.",
+    "Buildings and rooms have no baked company/agent/status names. Use dynamic text layers in the dashboard.",
+    "Use normalized versions for consistent placement. Use tight versions for exact bounds.",
+    "Recommended CSS: image-rendering: pixelated; image-rendering: crisp-edges;"
+  ],
+  "categories": {
+    "characters": [
+      {
+        "name": "character_01_ceo_cyan_glasses",
+        "path": "characters/character_01_ceo_cyan_glasses.png",
+        "source_bbox": [
+          68,
+          33,
+          202,
+          285
+        ],
+        "size": [
+          134,
+          252
+        ],
+        "component_area": 20867,
+        "normalized_path": "characters_normalized/character_01_ceo_cyan_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_02_ops_lead_blue",
+        "path": "characters/character_02_ops_lead_blue.png",
+        "source_bbox": [
+          308,
+          36,
+          437,
+          285
+        ],
+        "size": [
+          129,
+          249
+        ],
+        "component_area": 19807,
+        "normalized_path": "characters_normalized/character_02_ops_lead_blue.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_03_manager_orange",
+        "path": "characters/character_03_manager_orange.png",
+        "source_bbox": [
+          540,
+          34,
+          672,
+          285
+        ],
+        "size": [
+          132,
+          251
+        ],
+        "component_area": 20520,
+        "normalized_path": "characters_normalized/character_03_manager_orange.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_04_qa_green",
+        "path": "characters/character_04_qa_green.png",
+        "source_bbox": [
+          774,
+          37,
+          902,
+          285
+        ],
+        "size": [
+          128,
+          248
+        ],
+        "component_area": 20829,
+        "normalized_path": "characters_normalized/character_04_qa_green.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_05_finance_orange_glasses",
+        "path": "characters/character_05_finance_orange_glasses.png",
+        "source_bbox": [
+          1010,
+          40,
+          1132,
+          285
+        ],
+        "size": [
+          122,
+          245
+        ],
+        "component_area": 19820,
+        "normalized_path": "characters_normalized/character_05_finance_orange_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_06_director_purple",
+        "path": "characters/character_06_director_purple.png",
+        "source_bbox": [
+          1241,
+          38,
+          1371,
+          285
+        ],
+        "size": [
+          130,
+          247
+        ],
+        "component_area": 19681,
+        "normalized_path": "characters_normalized/character_06_director_purple.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_07_product_gold",
+        "path": "characters/character_07_product_gold.png",
+        "source_bbox": [
+          71,
+          292,
+          195,
+          539
+        ],
+        "size": [
+          124,
+          247
+        ],
+        "component_area": 20221,
+        "normalized_path": "characters_normalized/character_07_product_gold.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_08_creative_purple_glasses",
+        "path": "characters/character_08_creative_purple_glasses.png",
+        "source_bbox": [
+          306,
+          292,
+          436,
+          538
+        ],
+        "size": [
+          130,
+          246
+        ],
+        "component_area": 19976,
+        "normalized_path": "characters_normalized/character_08_creative_purple_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_09_research_green",
+        "path": "characters/character_09_research_green.png",
+        "source_bbox": [
+          542,
+          285,
+          669,
+          538
+        ],
+        "size": [
+          127,
+          253
+        ],
+        "component_area": 19876,
+        "normalized_path": "characters_normalized/character_09_research_green.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_10_listing_teal",
+        "path": "characters/character_10_listing_teal.png",
+        "source_bbox": [
+          779,
+          279,
+          895,
+          537
+        ],
+        "size": [
+          116,
+          258
+        ],
+        "component_area": 17995,
+        "normalized_path": "characters_normalized/character_10_listing_teal.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_11_support_purple",
+        "path": "characters/character_11_support_purple.png",
+        "source_bbox": [
+          1001,
+          285,
+          1140,
+          538
+        ],
+        "size": [
+          139,
+          253
+        ],
+        "component_area": 21447,
+        "normalized_path": "characters_normalized/character_11_support_purple.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_12_analyst_green_glasses",
+        "path": "characters/character_12_analyst_green_glasses.png",
+        "source_bbox": [
+          1243,
+          286,
+          1370,
+          538
+        ],
+        "size": [
+          127,
+          252
+        ],
+        "component_area": 19653,
+        "normalized_path": "characters_normalized/character_12_analyst_green_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_13_executive_blue",
+        "path": "characters/character_13_executive_blue.png",
+        "source_bbox": [
+          67,
+          540,
+          197,
+          786
+        ],
+        "size": [
+          130,
+          246
+        ],
+        "component_area": 19254,
+        "normalized_path": "characters_normalized/character_13_executive_blue.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_14_logistics_gold",
+        "path": "characters/character_14_logistics_gold.png",
+        "source_bbox": [
+          305,
+          531,
+          434,
+          786
+        ],
+        "size": [
+          129,
+          255
+        ],
+        "component_area": 20369,
+        "normalized_path": "characters_normalized/character_14_logistics_gold.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_15_agent_gold",
+        "path": "characters/character_15_agent_gold.png",
+        "source_bbox": [
+          542,
+          531,
+          669,
+          786
+        ],
+        "size": [
+          127,
+          255
+        ],
+        "component_area": 20090,
+        "normalized_path": "characters_normalized/character_15_agent_gold.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_16_project_manager_orange",
+        "path": "characters/character_16_project_manager_orange.png",
+        "source_bbox": [
+          776,
+          525,
+          893,
+          786
+        ],
+        "size": [
+          117,
+          261
+        ],
+        "component_area": 18173,
+        "normalized_path": "characters_normalized/character_16_project_manager_orange.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_17_data_blue_glasses",
+        "path": "characters/character_17_data_blue_glasses.png",
+        "source_bbox": [
+          1005,
+          532,
+          1133,
+          786
+        ],
+        "size": [
+          128,
+          254
+        ],
+        "component_area": 19921,
+        "normalized_path": "characters_normalized/character_17_data_blue_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_18_finance_purple_glasses",
+        "path": "characters/character_18_finance_purple_glasses.png",
+        "source_bbox": [
+          1243,
+          540,
+          1366,
+          786
+        ],
+        "size": [
+          123,
+          246
+        ],
+        "component_area": 20080,
+        "normalized_path": "characters_normalized/character_18_finance_purple_glasses.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_19_field_operator_green_cap",
+        "path": "characters/character_19_field_operator_green_cap.png",
+        "source_bbox": [
+          62,
+          779,
+          198,
+          1045
+        ],
+        "size": [
+          136,
+          266
+        ],
+        "component_area": 21578,
+        "normalized_path": "characters_normalized/character_19_field_operator_green_cap.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_20_ops_yellow",
+        "path": "characters/character_20_ops_yellow.png",
+        "source_bbox": [
+          313,
+          776,
+          432,
+          1045
+        ],
+        "size": [
+          119,
+          269
+        ],
+        "component_area": 19561,
+        "normalized_path": "characters_normalized/character_20_ops_yellow.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_21_agent_green",
+        "path": "characters/character_21_agent_green.png",
+        "source_bbox": [
+          542,
+          779,
+          671,
+          1045
+        ],
+        "size": [
+          129,
+          266
+        ],
+        "component_area": 20543,
+        "normalized_path": "characters_normalized/character_21_agent_green.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_22_agent_teal",
+        "path": "characters/character_22_agent_teal.png",
+        "source_bbox": [
+          779,
+          783,
+          895,
+          1045
+        ],
+        "size": [
+          116,
+          262
+        ],
+        "component_area": 19306,
+        "normalized_path": "characters_normalized/character_22_agent_teal.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_23_agent_purple",
+        "path": "characters/character_23_agent_purple.png",
+        "source_bbox": [
+          1005,
+          783,
+          1134,
+          1045
+        ],
+        "size": [
+          129,
+          262
+        ],
+        "component_area": 20412,
+        "normalized_path": "characters_normalized/character_23_agent_purple.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      },
+      {
+        "name": "character_24_agent_orange",
+        "path": "characters/character_24_agent_orange.png",
+        "source_bbox": [
+          1243,
+          783,
+          1370,
+          1045
+        ],
+        "size": [
+          127,
+          262
+        ],
+        "component_area": 20372,
+        "normalized_path": "characters_normalized/character_24_agent_orange.png",
+        "normalized_size": [
+          150,
+          265
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 75,
+          "y": 263
+        }
+      }
+    ],
+    "buildings": [
+      {
+        "name": "building_01_amber",
+        "path": "buildings/building_01_amber.png",
+        "source_bbox": [
+          44,
+          108,
+          352,
+          365
+        ],
+        "size": [
+          308,
+          257
+        ],
+        "component_area": 57322,
+        "normalized_path": "buildings_normalized/building_01_amber.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_02_cyan",
+        "path": "buildings/building_02_cyan.png",
+        "source_bbox": [
+          383,
+          90,
+          695,
+          367
+        ],
+        "size": [
+          312,
+          277
+        ],
+        "component_area": 59459,
+        "normalized_path": "buildings_normalized/building_02_cyan.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_03_purple",
+        "path": "buildings/building_03_purple.png",
+        "source_bbox": [
+          723,
+          110,
+          1034,
+          367
+        ],
+        "size": [
+          311,
+          257
+        ],
+        "component_area": 58798,
+        "normalized_path": "buildings_normalized/building_03_purple.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_04_green",
+        "path": "buildings/building_04_green.png",
+        "source_bbox": [
+          1060,
+          88,
+          1403,
+          369
+        ],
+        "size": [
+          343,
+          281
+        ],
+        "component_area": 67743,
+        "normalized_path": "buildings_normalized/building_04_green.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_05_gray",
+        "path": "buildings/building_05_gray.png",
+        "source_bbox": [
+          29,
+          424,
+          358,
+          682
+        ],
+        "size": [
+          329,
+          258
+        ],
+        "component_area": 61675,
+        "normalized_path": "buildings_normalized/building_05_gray.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_06_red",
+        "path": "buildings/building_06_red.png",
+        "source_bbox": [
+          382,
+          404,
+          694,
+          682
+        ],
+        "size": [
+          312,
+          278
+        ],
+        "component_area": 59582,
+        "normalized_path": "buildings_normalized/building_06_red.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_07_blue",
+        "path": "buildings/building_07_blue.png",
+        "source_bbox": [
+          714,
+          415,
+          1040,
+          682
+        ],
+        "size": [
+          326,
+          267
+        ],
+        "component_area": 62428,
+        "normalized_path": "buildings_normalized/building_07_blue.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_08_teal",
+        "path": "buildings/building_08_teal.png",
+        "source_bbox": [
+          1068,
+          432,
+          1392,
+          684
+        ],
+        "size": [
+          324,
+          252
+        ],
+        "component_area": 61042,
+        "normalized_path": "buildings_normalized/building_08_teal.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_09_bronze_satellite",
+        "path": "buildings/building_09_bronze_satellite.png",
+        "source_bbox": [
+          29,
+          720,
+          357,
+          974
+        ],
+        "size": [
+          328,
+          254
+        ],
+        "component_area": 57940,
+        "normalized_path": "buildings_normalized/building_09_bronze_satellite.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_10_navy_dome",
+        "path": "buildings/building_10_navy_dome.png",
+        "source_bbox": [
+          383,
+          713,
+          704,
+          975
+        ],
+        "size": [
+          321,
+          262
+        ],
+        "component_area": 58794,
+        "normalized_path": "buildings_normalized/building_10_navy_dome.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_11_teal_dome",
+        "path": "buildings/building_11_teal_dome.png",
+        "source_bbox": [
+          729,
+          725,
+          1047,
+          977
+        ],
+        "size": [
+          318,
+          252
+        ],
+        "component_area": 57650,
+        "normalized_path": "buildings_normalized/building_11_teal_dome.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      },
+      {
+        "name": "building_12_gunmetal",
+        "path": "buildings/building_12_gunmetal.png",
+        "source_bbox": [
+          1061,
+          715,
+          1398,
+          979
+        ],
+        "size": [
+          337,
+          264
+        ],
+        "component_area": 63102,
+        "normalized_path": "buildings_normalized/building_12_gunmetal.png",
+        "normalized_size": [
+          380,
+          310
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 308
+        }
+      }
+    ],
+    "rooms": [
+      {
+        "name": "room_01_shared_hq",
+        "path": "rooms/room_01_shared_hq.png",
+        "source_bbox": [
+          50,
+          153,
+          366,
+          530
+        ],
+        "size": [
+          316,
+          377
+        ],
+        "component_area": 101314,
+        "normalized_path": "rooms_normalized/room_01_shared_hq.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_02_research",
+        "path": "rooms/room_02_research.png",
+        "source_bbox": [
+          393,
+          153,
+          705,
+          529
+        ],
+        "size": [
+          312,
+          376
+        ],
+        "component_area": 99837,
+        "normalized_path": "rooms_normalized/room_02_research.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_03_product",
+        "path": "rooms/room_03_product.png",
+        "source_bbox": [
+          730,
+          153,
+          1041,
+          530
+        ],
+        "size": [
+          311,
+          377
+        ],
+        "component_area": 99411,
+        "normalized_path": "rooms_normalized/room_03_product.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_04_strategy",
+        "path": "rooms/room_04_strategy.png",
+        "source_bbox": [
+          1067,
+          155,
+          1380,
+          529
+        ],
+        "size": [
+          313,
+          374
+        ],
+        "component_area": 98536,
+        "normalized_path": "rooms_normalized/room_04_strategy.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_05_listing_ops",
+        "path": "rooms/room_05_listing_ops.png",
+        "source_bbox": [
+          50,
+          562,
+          365,
+          946
+        ],
+        "size": [
+          315,
+          384
+        ],
+        "component_area": 102094,
+        "normalized_path": "rooms_normalized/room_05_listing_ops.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_06_finance_qa",
+        "path": "rooms/room_06_finance_qa.png",
+        "source_bbox": [
+          392,
+          561,
+          705,
+          946
+        ],
+        "size": [
+          313,
+          385
+        ],
+        "component_area": 101981,
+        "normalized_path": "rooms_normalized/room_06_finance_qa.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_07_server",
+        "path": "rooms/room_07_server.png",
+        "source_bbox": [
+          728,
+          561,
+          1044,
+          946
+        ],
+        "size": [
+          316,
+          385
+        ],
+        "component_area": 102934,
+        "normalized_path": "rooms_normalized/room_07_server.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      },
+      {
+        "name": "room_08_workshop",
+        "path": "rooms/room_08_workshop.png",
+        "source_bbox": [
+          1066,
+          561,
+          1379,
+          946
+        ],
+        "size": [
+          313,
+          385
+        ],
+        "component_area": 101906,
+        "normalized_path": "rooms_normalized/room_08_workshop.png",
+        "normalized_size": [
+          380,
+          420
+        ],
+        "anchor": {
+          "type": "bottom-center",
+          "x": 190,
+          "y": 418
+        }
+      }
+    ]
+  }
+}

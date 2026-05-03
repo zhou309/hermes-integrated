@@ -1,0 +1,25 @@
+.asset-pixel {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  user-select: none;
+  pointer-events: none;
+}
+
+.asset-character {
+  transform-origin: bottom center;
+}
+
+.asset-building,
+.asset-room {
+  transform-origin: bottom center;
+}
+
+.asset-label {
+  position: absolute;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #D6E4F0;
+  text-shadow: 0 0 8px rgba(22,200,232,.45);
+}

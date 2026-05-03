@@ -214,11 +214,19 @@ function _isCronScheduleError(job) {
     (job.state === 'error' || job.last_status === 'error');
 }
 
+const HERMES_HQ_ASSET_BASE = '/static/assets/hermes-hq/';
+
+function hqAssetPath(path) {
+  if (!path) return '';
+  if (/^(?:https?:)?\/\//.test(path) || path.startsWith('/')) return path;
+  return `${HERMES_HQ_ASSET_BASE}${path}`;
+}
+
 const HERMES_HQ_DATA = {
   sharedAgents: [
     {
       id: 'max',
-      sprite: 'agent-max.png',
+      sprite: 'characters_normalized/character_01_ceo_cyan_glasses.png',
       companyId: 'shared',
       companyName: 'Shared HQ',
       badge: 'HQ',
@@ -234,7 +242,7 @@ const HERMES_HQ_DATA = {
     },
     {
       id: 'atlas',
-      sprite: 'agent-atlas.png',
+      sprite: 'characters_normalized/character_02_ops_lead_blue.png',
       companyId: 'shared',
       companyName: 'Shared HQ',
       badge: 'HQ',
@@ -250,7 +258,7 @@ const HERMES_HQ_DATA = {
     },
     {
       id: 'vera',
-      sprite: 'agent-vera.png',
+      sprite: 'characters_normalized/character_05_finance_orange_glasses.png',
       companyId: 'shared',
       companyName: 'Shared HQ',
       badge: 'HQ',
@@ -266,7 +274,7 @@ const HERMES_HQ_DATA = {
     },
     {
       id: 'hermes-core',
-      sprite: 'agent-hermes-core.png',
+      sprite: 'characters_normalized/character_17_data_blue_glasses.png',
       companyId: 'shared',
       companyName: 'Shared HQ',
       badge: 'SYS',
@@ -286,6 +294,8 @@ const HERMES_HQ_DATA = {
       id: 'boothmade',
       code: 'BM',
       theme: 'amber',
+      buildingAsset: 'buildings_normalized/building_01_amber.png',
+      roomAsset: 'rooms_normalized/room_04_strategy.png',
       name: 'Boothmade',
       subtitle: 'Business Event & Display Solutions',
       status: 'active',
@@ -295,7 +305,8 @@ const HERMES_HQ_DATA = {
       agents: [
         {
           id: 'bm-scout',
-          sprite: 'agent-bm-scout.png',
+          sprite: 'characters_normalized/character_09_research_green.png',
+          roomAsset: 'rooms_normalized/room_02_research.png',
           companyId: 'boothmade',
           companyName: 'Boothmade',
           badge: 'BM',
@@ -311,7 +322,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'bm-piper',
-          sprite: 'agent-bm-piper.png',
+          sprite: 'characters_normalized/character_07_product_gold.png',
+          roomAsset: 'rooms_normalized/room_03_product.png',
           companyId: 'boothmade',
           companyName: 'Boothmade',
           badge: 'BM',
@@ -327,7 +339,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'bm-nova',
-          sprite: 'agent-bm-nova.png',
+          sprite: 'characters_normalized/character_08_creative_purple_glasses.png',
+          roomAsset: 'rooms_normalized/room_08_workshop.png',
           companyId: 'boothmade',
           companyName: 'Boothmade',
           badge: 'BM',
@@ -343,7 +356,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'bm-sage',
-          sprite: 'agent-bm-sage.png',
+          sprite: 'characters_normalized/character_10_listing_teal.png',
+          roomAsset: 'rooms_normalized/room_05_listing_ops.png',
           companyId: 'boothmade',
           companyName: 'Boothmade',
           badge: 'BM',
@@ -363,6 +377,8 @@ const HERMES_HQ_DATA = {
       id: 'h2waders',
       code: 'H2',
       theme: 'teal',
+      buildingAsset: 'buildings_normalized/building_08_teal.png',
+      roomAsset: 'rooms_normalized/room_08_workshop.png',
       name: 'H2Waders',
       subtitle: 'Field-Tested Waders & Gear',
       status: 'active',
@@ -372,7 +388,8 @@ const HERMES_HQ_DATA = {
       agents: [
         {
           id: 'h2-scout',
-          sprite: 'agent-h2-scout.png',
+          sprite: 'characters_normalized/character_19_field_operator_green_cap.png',
+          roomAsset: 'rooms_normalized/room_02_research.png',
           companyId: 'h2waders',
           companyName: 'H2Waders',
           badge: 'H2',
@@ -388,7 +405,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'h2-piper',
-          sprite: 'agent-h2-piper.png',
+          sprite: 'characters_normalized/character_14_logistics_gold.png',
+          roomAsset: 'rooms_normalized/room_03_product.png',
           companyId: 'h2waders',
           companyName: 'H2Waders',
           badge: 'H2',
@@ -404,7 +422,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'h2-nova',
-          sprite: 'agent-h2-nova.png',
+          sprite: 'characters_normalized/character_22_agent_teal.png',
+          roomAsset: 'rooms_normalized/room_04_strategy.png',
           companyId: 'h2waders',
           companyName: 'H2Waders',
           badge: 'H2',
@@ -420,7 +439,8 @@ const HERMES_HQ_DATA = {
         },
         {
           id: 'h2-sage',
-          sprite: 'agent-h2-sage.png',
+          sprite: 'characters_normalized/character_12_analyst_green_glasses.png',
+          roomAsset: 'rooms_normalized/room_05_listing_ops.png',
           companyId: 'h2waders',
           companyName: 'H2Waders',
           badge: 'H2',
@@ -795,7 +815,7 @@ function hqPixelWindows(count) {
 function hqRenderAgentSprites(agents, compact) {
   return agents.map(agent => `
     <button class="hq-pixel-agent ${hqStatusClass(agent.status)}${compact ? ' compact' : ''}" type="button" onclick="event.stopPropagation();hqSelectEntity('agent','${agent.id}')" title="${esc(agent.name)} - ${esc(agent.role)}">
-      <span class="hq-pixel-avatar${agent.sprite ? ' has-sprite' : ''}" aria-hidden="true">${agent.sprite ? `<img class="hq-sprite" src="/static/assets/${esc(agent.sprite)}" alt="">` : esc(agent.name.charAt(0))}<span class="hq-led ${hqStatusClass(agent.status)}"></span></span>
+      <span class="hq-pixel-avatar${agent.sprite ? ' has-sprite' : ''}" aria-hidden="true">${agent.sprite ? `<img class="hq-sprite" src="${esc(hqAssetPath(agent.sprite))}" alt="">` : esc(agent.name.charAt(0))}<span class="hq-led ${hqStatusClass(agent.status)}"></span></span>
       <span>
         <strong>${esc(agent.name)}</strong>
         <em>${esc(hqStatusLabel(agent.status))}</em>
@@ -811,10 +831,8 @@ function hqRenderCampus() {
   shared.innerHTML = `
     <article class="hq-pixel-hq" onclick="hqSelectEntity('agent','max')">
       <div class="hq-building-sign">Shared HQ</div>
-      <div class="hq-pixel-roof">
-        <span></span><span></span><span></span><span></span>
-      </div>
-      <div class="hq-pixel-building hq-theme-steel">
+      <div class="hq-pixel-building hq-theme-steel has-asset">
+        <img class="hq-building-asset asset-pixel" src="${esc(hqAssetPath('buildings_normalized/building_02_cyan.png'))}" alt="" aria-hidden="true">
         <div class="hq-window-grid">${hqPixelWindows(18)}</div>
         <div class="hq-command-desk">
           ${hqRenderAgentSprites(sharedAgents, false)}
@@ -835,7 +853,8 @@ function hqRenderCampus() {
     return `
       <article class="hq-pixel-company ${hqThemeClass(company.theme)}${selected ? ' is-selected' : ''}" onclick="hqSelectEntity('company','${company.id}')">
         <div class="hq-building-sign">${esc(company.name)}</div>
-        <div class="hq-pixel-storefront">
+        <div class="hq-pixel-storefront${company.buildingAsset ? ' has-asset' : ''}">
+          ${company.buildingAsset ? `<img class="hq-building-asset asset-pixel" src="${esc(hqAssetPath(company.buildingAsset))}" alt="" aria-hidden="true">` : ''}
           <div class="hq-pixel-awning"><span></span><span></span><span></span><span></span><span></span></div>
           <div class="hq-window-grid small">${hqPixelWindows(12)}</div>
           <div class="hq-pixel-door"></div>
@@ -1025,7 +1044,8 @@ function hqRenderInspector() {
         <div class="hq-company-office">
           <div class="hq-office-grid">
             ${company.agents.map(agent => `
-              <button class="hq-office-room ${hqStatusClass(agent.status)}" type="button" onclick="hqSelectEntity('agent','${agent.id}')" title="${esc(agent.task)} · Next: ${esc(agent.nextHandoff)}">
+              <button class="hq-office-room ${agent.roomAsset ? 'has-room-asset ' : ''}${hqStatusClass(agent.status)}" type="button" onclick="hqSelectEntity('agent','${agent.id}')" title="${esc(agent.task)} · Next: ${esc(agent.nextHandoff)}">
+                ${agent.roomAsset ? `<img class="hq-room-asset asset-pixel" src="${esc(hqAssetPath(agent.roomAsset))}" alt="" aria-hidden="true">` : ''}
                 <span class="hq-office-room-sign">${esc(agent.name)}</span>
                 <span class="hq-office-room-role">${esc(agent.role)}</span>
                 <span class="hq-office-desk" aria-hidden="true"></span>
@@ -1033,7 +1053,7 @@ function hqRenderInspector() {
           </div>
         </div>
         <div class="hq-agent-feature-card">
-          <div class="hq-pixel-avatar" aria-hidden="true">${esc(primaryAgent.name.charAt(0))}</div>
+          <div class="hq-pixel-avatar${primaryAgent.sprite ? ' has-sprite' : ''}" aria-hidden="true">${primaryAgent.sprite ? `<img class="hq-sprite" src="${esc(hqAssetPath(primaryAgent.sprite))}" alt="">` : esc(primaryAgent.name.charAt(0))}</div>
           <div>
             <strong>${esc(primaryAgent.name)}</strong>
             <span>${esc(primaryAgent.role)} · ${esc(hqStatusLabel(primaryAgent.status))}</span>

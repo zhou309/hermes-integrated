@@ -43,13 +43,11 @@
   <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js" integrity="sha384-/nfmYPUzWMS6v2atn8hbljz7NE0EI1iGx34lJaNzyVjWGDzMv+ciUZUeJpKA3Glc" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js" integrity="sha384-AQLWHRKAgdTxkolJcLOELg4E9rE89CPE2xMy3tIRFn08NcGKPTsELdvKomqji+DL" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js" integrity="sha384-U4fBROT3kCM582gaYiNaOSQiJbXPzd9SfR1598Y7yeGSYVBzikXrNg0XyuU+mOnl" crossorigin="anonymous" defer></script>
-  <!-- PWA service worker registration -->
+  <!-- PWA service worker: unregister any cached worker so pages always load fresh -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js?v=__WEBUI_VERSION__').catch(function(err) {
-          console.warn('[pwa] Service worker registration failed:', err);
-        });
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        regs.forEach(function(r) { r.unregister(); });
       });
     }
   </script>
@@ -81,7 +79,8 @@
 </header>
 <div class="layout">
   <nav class="rail" aria-label="Primary navigation">
-    <button class="rail-btn nav-tab active" data-panel="chat" onclick="switchPanel('chat')" title="Chat" data-i18n-title="tab_chat" aria-label="Chat"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+    <button class="rail-btn nav-tab active" data-panel="hq" onclick="switchPanel('hq')" title="Hermes HQ" aria-label="Hermes HQ"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-5h6v5"/><path d="M8.5 9h.01"/><path d="M15.5 9h.01"/></svg></button>
+    <button class="rail-btn nav-tab" data-panel="chat" onclick="switchPanel('chat')" title="Chat" data-i18n-title="tab_chat" aria-label="Chat"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
     <button class="rail-btn nav-tab" data-panel="tasks" onclick="switchPanel('tasks')" title="Tasks" data-i18n-title="tab_tasks" aria-label="Tasks"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
     <button class="rail-btn nav-tab" data-panel="skills" onclick="switchPanel('skills')" title="Skills" data-i18n-title="tab_skills" aria-label="Skills"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></button>
     <button class="rail-btn nav-tab" data-panel="memory" onclick="switchPanel('memory')" title="Memory" data-i18n-title="tab_memory" aria-label="Memory"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg></button>
@@ -95,7 +94,8 @@
   <aside class="sidebar">
 
     <div class="sidebar-nav">
-      <button class="nav-tab active" data-panel="chat" data-label="Chat" onclick="switchPanel('chat')" title="Chat" data-i18n-title="tab_chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+      <button class="nav-tab active" data-panel="hq" data-label="HQ" onclick="switchPanel('hq')" title="Hermes HQ"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-5h6v5"/><path d="M8.5 9h.01"/><path d="M15.5 9h.01"/></svg></button>
+      <button class="nav-tab" data-panel="chat" data-label="Chat" onclick="switchPanel('chat')" title="Chat" data-i18n-title="tab_chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
       <button class="nav-tab" data-panel="tasks" data-label="Tasks" onclick="switchPanel('tasks')" title="Tasks" data-i18n-title="tab_tasks"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
       <button class="nav-tab" data-panel="skills" data-label="Skills" onclick="switchPanel('skills')" title="Skills" data-i18n-title="tab_skills"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></button>
       <button class="nav-tab" data-panel="memory" data-label="Memory" onclick="switchPanel('memory')" title="Memory" data-i18n-title="tab_memory"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2z"/></svg></button>
@@ -106,8 +106,43 @@
       <!-- Settings button mirrored here for mobile (rail is desktop-only via @media >=768px). Keep in sync with rail entry. -->
       <button class="nav-tab" data-panel="settings" onclick="switchPanel('settings')" title="Settings" data-i18n-title="tab_settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     </div>
+    <!-- Hermes HQ panel -->
+    <div class="panel-view active" id="panelHq">
+      <div class="panel-head">
+        <span>Hermes HQ</span>
+        <div class="panel-head-actions">
+          <button class="panel-head-btn" type="button" onclick="hqOpenCommand('max')" title="Speak to Max" aria-label="Speak to Max">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="panel-head-sub">Command center, company lanes, and active handoffs.</div>
+      <div class="hq-side-shell">
+        <div class="hq-side-card">
+          <div class="hq-side-card-title">Quick Channels</div>
+          <div class="hq-side-actions">
+            <button class="hq-side-action" type="button" onclick="hqOpenCommand('max')">
+              <span class="hq-side-action-name">Max</span>
+              <span class="hq-side-action-meta">Executive command</span>
+            </button>
+            <button class="hq-side-action" type="button" onclick="hqOpenCommand('hermes-core')">
+              <span class="hq-side-action-name">Hermes Core</span>
+              <span class="hq-side-action-meta">System chat</span>
+            </button>
+          </div>
+        </div>
+        <div class="hq-side-card">
+          <div class="hq-side-card-title">Tracked Companies</div>
+          <div class="hq-company-list" id="hqCompanyList"></div>
+        </div>
+        <div class="hq-side-card">
+          <div class="hq-side-card-title">Live Feed</div>
+          <div class="hq-mini-feed" id="hqMiniFeed"></div>
+        </div>
+      </div>
+    </div>
     <!-- Chat panel -->
-    <div class="panel-view active" id="panelChat">
+    <div class="panel-view" id="panelChat">
       <div class="panel-head">
         <span data-i18n="tab_chat">Chat</span>
         <div class="panel-head-actions">
@@ -223,7 +258,149 @@
     </div>
   <div class="resize-handle" id="sidebarResize"></div>
   </aside>
-  <main class="main">
+  <main class="main showing-hq">
+    <div id="mainHq" class="main-view">
+      <div class="hq-main-shell">
+        <div class="hq-appbar">
+          <div class="hq-brand-lockup">
+            <span class="hq-wing-mark" aria-hidden="true">H</span>
+            <div>
+              <div class="hq-brand-title">Hermes HQ</div>
+              <div class="hq-brand-version">v2.4.0</div>
+            </div>
+          </div>
+
+          <div class="hq-top-tabs" role="tablist" aria-label="Hermes HQ sections">
+            <button class="hq-top-tab active" type="button" data-hq-tab="dashboard" onclick="hqFocusSection('dashboard')">Dashboard</button>
+            <button class="hq-top-tab" type="button" data-hq-tab="companies" onclick="hqFocusSection('companies')">Companies</button>
+            <button class="hq-top-tab" type="button" data-hq-tab="shared" onclick="hqFocusSection('shared')">Shared HQ</button>
+            <button class="hq-top-tab" type="button" data-hq-tab="tasks" onclick="hqFocusSection('tasks')">Tasks</button>
+            <button class="hq-top-tab" type="button" data-hq-tab="agents" onclick="hqFocusSection('agents')">Agents</button>
+          </div>
+
+          <div class="hq-system-status">
+            <span class="hq-status-spark" aria-hidden="true">+</span>
+            <span>System Status</span>
+            <strong>All systems operational.</strong>
+          </div>
+
+          <button class="hq-ceo-mode" type="button" onclick="hqOpenCommand('max')">
+            <span class="hq-ceo-avatar" aria-hidden="true">M</span>
+            <span><strong>CEO Mode</strong><em>You are in control</em></span>
+          </button>
+        </div>
+
+        <div class="hq-portfolio-strip">
+          <div class="hq-portfolio-title-block">
+            <h1 class="hq-title">Portfolio Command Center</h1>
+            <p class="hq-subtitle">Overview of all companies and operations</p>
+          </div>
+          <div class="hq-stat-grid" id="hqStatGrid"></div>
+        </div>
+
+        <div class="hq-main-layout">
+          <aside class="hq-map-filter" aria-label="Hermes HQ map filters">
+            <div class="hq-filter-top">
+              <span>Filters</span>
+              <span class="hq-filter-glyph" aria-hidden="true">::</span>
+            </div>
+            <label class="hq-filter-search">
+              <span>Search</span>
+              <input type="search" placeholder="Search companies..." aria-label="Search companies" oninput="hqSetCompanySearch(this.value)">
+            </label>
+            <div class="hq-filter-block">
+              <div class="hq-filter-label">Company Status</div>
+              <button class="hq-filter-row active" type="button" onclick="hqFocusSection('companies')">
+                <span>All Companies</span>
+                <strong id="hqFilterCompanyCount">0</strong>
+              </button>
+              <div class="hq-filter-company-list" id="hqFilterCompanyRows"></div>
+            </div>
+            <div class="hq-filter-block">
+              <div class="hq-filter-label">Status</div>
+              <button class="hq-filter-row" type="button" onclick="hqFocusSection('tasks')"><span><i class="hq-dot hq-dot-live"></i>Active Work</span><strong id="hqFilterActiveWork">0</strong></button>
+              <button class="hq-filter-row" type="button" onclick="hqFocusSection('tasks')"><span><i class="hq-dot hq-dot-block"></i>Blocked Only</span><strong id="hqFilterBlockedWork">0</strong></button>
+              <button class="hq-filter-row" type="button" onclick="hqFocusSection('tasks')"><span><i class="hq-dot hq-dot-warn"></i>Awaiting CEO</span><strong id="hqFilterAwaitingCeo">0</strong></button>
+            </div>
+            <div class="hq-filter-block">
+              <div class="hq-filter-label">Roles</div>
+              <div class="hq-filter-role-list" id="hqFilterRoleRows"></div>
+            </div>
+            <button class="hq-filter-clear" type="button" onclick="hqFocusSection('dashboard')">Center Map</button>
+          </aside>
+          <div class="hq-content">
+            <section class="hq-section" id="hqSectionDashboard" data-hq-section="dashboard">
+              <div class="hq-campus-stage">
+                <div class="hq-campus-top">
+                  <div>
+                    <div class="hq-section-kicker">Live Campus</div>
+                    <h2 class="hq-section-title">Shared HQ and Active Companies</h2>
+                  </div>
+                  <div class="hq-campus-legend">
+                    <span><i class="hq-dot hq-dot-live"></i> Active</span>
+                    <span><i class="hq-dot hq-dot-warn"></i> Awaiting</span>
+                    <span><i class="hq-dot hq-dot-block"></i> Blocked</span>
+                  </div>
+                </div>
+                <div class="hq-campus-map">
+                  <div class="hq-campus-roads" aria-hidden="true"></div>
+                  <div id="hqCampusShared"></div>
+                  <div class="hq-campus-companies" id="hqCampusCompanies"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="hq-section" id="hqSectionShared" data-hq-section="shared">
+              <div class="hq-section-head">
+                <div>
+                  <div class="hq-section-kicker">Shared HQ</div>
+                  <h2 class="hq-section-title">Command Lane</h2>
+                </div>
+                <button class="hq-inline-action" type="button" onclick="hqOpenCommand('max')">Open Max Chat</button>
+              </div>
+              <div class="hq-shared-grid" id="hqSharedGrid"></div>
+            </section>
+
+            <section class="hq-section" id="hqSectionCompanies" data-hq-section="companies">
+              <div class="hq-section-head">
+                <div>
+                  <div class="hq-section-kicker">Companies</div>
+                  <h2 class="hq-section-title">Active Brand Lanes</h2>
+                </div>
+              </div>
+              <div class="hq-company-grid" id="hqCompanyGrid"></div>
+            </section>
+
+            <section class="hq-section" id="hqSectionTasks" data-hq-section="tasks">
+              <div class="hq-section-head">
+                <div>
+                  <div class="hq-section-kicker">Tasks</div>
+                  <h2 class="hq-section-title">What Is Moving Right Now</h2>
+                </div>
+              </div>
+              <div class="hq-task-board" id="hqTaskBoard"></div>
+            </section>
+
+            <section class="hq-section" id="hqSectionAgents" data-hq-section="agents">
+              <div class="hq-section-head">
+                <div>
+                  <div class="hq-section-kicker">Agents</div>
+                  <h2 class="hq-section-title">Current Ownership Grid</h2>
+                </div>
+              </div>
+              <div class="hq-agent-groups" id="hqAgentGroups"></div>
+            </section>
+          </div>
+
+          <aside class="hq-inspector" id="hqInspector"></aside>
+        </div>
+
+        <div class="hq-bottom-feed">
+          <div class="hq-bottom-feed-title">Recent Handoffs</div>
+          <div class="hq-bottom-feed-list" id="hqBottomFeed"></div>
+        </div>
+      </div>
+    </div>
     <div id="mainChat" class="main-view">
     <div class="messages" id="messages">
       <button id="scrollToBottomBtn" class="scroll-to-bottom-btn" aria-label="Scroll to bottom" onclick="scrollToBottom()" style="display:none">↓</button>
@@ -1029,6 +1206,27 @@
   </div>
 </div>
 <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileSidebar()"></div>
+<div class="hq-command-overlay" id="hqCommandOverlay" style="display:none" aria-hidden="true">
+  <div class="hq-command-card" role="dialog" aria-modal="true" aria-labelledby="hqCommandTitle" aria-describedby="hqCommandMeta">
+    <div class="hq-command-header">
+      <div>
+        <div class="hq-command-kicker">Command Channel</div>
+        <div class="hq-command-title" id="hqCommandTitle">Message Max</div>
+        <div class="hq-command-meta" id="hqCommandMeta">Route an instruction through the existing Hermes chat flow.</div>
+      </div>
+      <button class="hq-command-close" type="button" onclick="hqCloseCommand()" aria-label="Close command popup">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="hq-command-target" id="hqCommandTarget"></div>
+    <textarea class="hq-command-input" id="hqCommandInput" rows="5" placeholder="Tell Max what you want done next…"></textarea>
+    <div class="hq-command-actions">
+      <button class="hq-command-btn" type="button" onclick="hqCloseCommand()">Cancel</button>
+      <button class="hq-command-btn" type="button" onclick="hqSendCommand(false)">Draft In Chat</button>
+      <button class="hq-command-btn primary" type="button" onclick="hqSendCommand(true)">Send To Chat</button>
+    </div>
+  </div>
+</div>
 <div class="app-dialog-overlay" id="appDialogOverlay" style="display:none" aria-hidden="true">
   <div class="app-dialog" id="appDialog" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogDesc">
     <div class="app-dialog-header">
